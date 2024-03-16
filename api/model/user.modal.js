@@ -19,6 +19,10 @@ const useSchema = new mongoose.Schema({
     type: String,
     default: "https://www.google.com/imgres?imgurl=https%3A%2F%2Fimg.freepik.com%2Fpremium-vector%2Fman-avatar-profile-picture-vector-illustration_268834-538.jpg&tbnid=DPknMIWk0qJ9zM&vet=12ahUKEwi7v53U-feEAxVEWvUHHZS7AW4QMygzegUIARDIAQ..i&imgrefurl=https%3A%2F%2Fwww.freepik.com%2Ffree-photos-vectors%2Funknown-profile&docid=pOEu2g4RyXBMWM&w=626&h=626&q=profile%20image&ved=2ahUKEwi7v53U-feEAxVEWvUHHZS7AW4QMygzegUIARDIAQ",
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 },
   {
     timestamps: true,
