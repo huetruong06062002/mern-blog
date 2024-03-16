@@ -31,8 +31,7 @@ function OAuth() {
         })
         const data = await res.json()
         if(res.ok){
-          let {_id, ...rest} = data
-          dispatch(signInSuccess(rest))
+          dispatch(signInSuccess(data))
           navigate('/')
         }
       } catch (error) {
