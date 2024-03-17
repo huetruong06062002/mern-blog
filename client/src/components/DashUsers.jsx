@@ -5,26 +5,24 @@ import { Link } from 'react-router-dom';
 import { RiDeleteBin2Fill } from "react-icons/ri";  
 import { FiEdit } from "react-icons/fi";
 import {HiOutlineExclamationCircle} from "react-icons/hi";
+import {FaCheck, FaTimes} from "react-icons/fa";
 
-function DashPosts() {
+function DashUsers() {
 
   const {currentUser} = useSelector((state) => state.user)
-  const [userPosts, setUserPosts] = useState([])
+  const [users, setUsers] = useState([])
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [postIdToDelete, setPostIdToDelete] = useState('');
-
-  console.log("check userPosts", userPosts);
+  const [userIdToDelete, setUserIdToDelete] = useState('');
   useEffect(() => {
-    const fetchPotsts = async () => {
+    const fetchUsers = async () => {
       try {
-        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`)
+        const res = await fetch(`/api/user/getusers`)
         const data = await res.json()
         if(res.ok){
-          setUserPosts(data.posts)
-          if(data.posts.length < 9) {
-            setShowMore(false)
-          
+          setUsers(data.users)
+          if(data.users.length < 9) {
+            setShowMore(false)         
           }
         }
       } catch (error) {
@@ -32,32 +30,33 @@ function DashPosts() {
       }
     }
     if(currentUser.isAdmin) {
-      fetchPotsts()
+      fetchUsers()
     }
-  }, [currentUser._id])
+  }, [currentUser._id, showMore])
 
+  console.log("showMore", showMore)
 
   const handleShowMore = async () => {
-    const startIndex = userPosts.length;
+    let startIndex = users.length;
 
     try {
-      const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+      const res = await fetch(`/api/user/getusers?startIndex=${startIndex}&limit=4`);
       const data = await res.json();
       if(res.ok){
-        setUserPosts((prev) => [...prev, ...data.posts]);
+        setUsers((prev) => [...prev, ...data.users]);
         if(data.posts.length < 9) {
           setShowMore(false);
         }
       }
     } catch (error) {
       console.log(error.message)
-    }
+    }    
   }
 
-  const handleDeletePost = async () => {
+  const handleDeleteUser= async () => {
     setShowModal(false);
     try{
-      const res = await fetch(`/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+      const res = await fetch(`/api/user/deleteuser/${userIdToDelete}/${currentUser._id}`,
         {
           method: "DELETE",
         }
@@ -67,7 +66,7 @@ function DashPosts() {
       if(!res.ok){
         console.log(data.message);
       }else{
-        setUserPosts((prev) => prev.filter((post) => post._id !== postIdToDelete));
+        setUers((prev) => prev.filter((post) => post._id !== userIdToDelete));
       }
     }catch(error){
 
@@ -76,53 +75,48 @@ function DashPosts() {
   
   return (
     <div className='table-auto overflow-x-scroll w-11/12 md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
-      {currentUser.isAdmin && userPosts.length > 0 ? (
+      {currentUser.isAdmin && users.length > 0 ? (
       <>
         <Table hoverable className='shadow-md'>
           <Table.Head>
-            <Table.HeadCell>Date update</Table.HeadCell>
-            <Table.HeadCell>Post image</Table.HeadCell>
-            <Table.HeadCell>Post title</Table.HeadCell>
-            <Table.HeadCell>Category</Table.HeadCell>
+            <Table.HeadCell>Date created</Table.HeadCell>
+            <Table.HeadCell>User image</Table.HeadCell>
+            <Table.HeadCell>User name</Table.HeadCell>
+            <Table.HeadCell>Email</Table.HeadCell>
+            <Table.HeadCell>Admin</Table.HeadCell>
             <Table.HeadCell>Delete</Table.HeadCell>
-            <Table.HeadCell>
-              <span>Edit</span> 
-            </Table.HeadCell> 
           </Table.Head>
 
-          {userPosts.map((post) => (
-            <Table.Body className='divide-y'>
+          {users.map((user) => (
+            <Table.Body className='divide-y' key={user._id}>
               <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                 {/* convert to string d/month/year */}
-                <Table.Cell>{new Date(post?.updatedAt).toLocaleDateString()}</Table.Cell>
-                <Table.Cell>
-                  <Link to={`/post/${post.slug}`}>
+                <Table.Cell>{new Date(user?.createdAt).toLocaleDateString()}</Table.Cell>
+                <Table.Cell>              
                     <img
-                      src={post.image}
-                      alt={post.title}
-                      className='w-20 h-10 object-cover bg-gray-500'
+                      src={user.profilePicture}
+                      alt={user.username}
+                      className='w-10 h-10 object-cover bg-gray-500 rounded-full'
                     />
-                  </Link>
+      
                 </Table.Cell>
                 <Table.Cell>
-                  <Link className='font-medium text-gray-900 dark:text-white' to={`/post/${post.slug}`}>{post.title}</Link>
+                  {user.username}
                 </Table.Cell>
                 <Table.Cell>
-                  <Link>{post.category}</Link>
+                  {user.email}
+                </Table.Cell>
+                <Table.Cell>
+                  {user.isAdmin ? (<FaCheck className="text-green-500"/>) : (<FaTimes className="text-red-500"/>)}
                 </Table.Cell>
                 <Table.Cell>
                   <span className='font-medium text-red-500 hover:underline cursor-pointer' onClick={
                     () => {
                       setShowModal(true);
-                      setPostIdToDelete(post._id);
+                      setUserIdToDelete(user._id)
                     }
                   }><RiDeleteBin2Fill /></span>
-                </Table.Cell>
-                <Table.Cell>
-                  <Link className='text-teal-500 hover:underline' to={`/update-post/${post._id}`}>
-                    <span className='font-medium text-lime-500 hover:underline cursor-pointer'><FiEdit /></span>
-                  </Link>
-                </Table.Cell>
+                </Table.Cell>          
               </Table.Row>
             </Table.Body>
           ))}
@@ -135,7 +129,7 @@ function DashPosts() {
           )
         }
       </>) : (
-        <p>You have no posts yet!</p>
+        <p>You have no users yet!</p>
       )}
        <Modal show={showModal} onClose={() => setShowModal(false)} popup size='md'>
         <Modal.Header/>
@@ -144,7 +138,7 @@ function DashPosts() {
               <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto'/>
               <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>Are you sure delete this post?</h3>
               <div className='flex justify-center gap-4'>
-                <Button color="failure" onClick={handleDeletePost}>Yes, I'm sure</Button>
+                <Button color="failure" onClick={handleDeleteUser}>Yes, I'm sure</Button>
                 <Button onClick={() => setShowModal(false)}>No, Cancel</Button>
               </div>
             </div>
@@ -154,4 +148,4 @@ function DashPosts() {
   )
 }
 
-export default DashPosts
+export default DashUsers
