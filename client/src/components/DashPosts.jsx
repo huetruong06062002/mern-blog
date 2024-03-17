@@ -14,7 +14,6 @@ function DashPosts() {
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState('');
 
-
   console.log("check userPosts", userPosts);
   useEffect(() => {
     const fetchPotsts = async () => {
@@ -70,13 +69,12 @@ function DashPosts() {
       }else{
         setUserPosts((prev) => prev.filter((post) => post._id !== postIdToDelete));
       }
-
-
     }catch(error){
 
     }
   }
-
+  
+  console.log("check form data image", formData.image);
   return (
     <div className='table-auto overflow-x-scroll w-11/12 md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {currentUser.isAdmin && userPosts.length > 0 ? (
@@ -122,8 +120,9 @@ function DashPosts() {
                   }><RiDeleteBin2Fill /></span>
                 </Table.Cell>
                 <Table.Cell>
-                  <Link className='text-teal-500 hover:underline' to={`/update-post/${post._id}`}/>
-                  <span className='font-medium text-lime-500 hover:underline cursor-pointer'><FiEdit /></span>
+                  <Link className='text-teal-500 hover:underline' to={`/update-post/${post._id}`}>
+                    <span className='font-medium text-lime-500 hover:underline cursor-pointer'><FiEdit /></span>
+                  </Link>
                 </Table.Cell>
               </Table.Row>
             </Table.Body>
