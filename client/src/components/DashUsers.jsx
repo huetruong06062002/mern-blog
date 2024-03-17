@@ -32,7 +32,7 @@ function DashUsers() {
     if(currentUser.isAdmin) {
       fetchUsers()
     }
-  }, [currentUser._id, showMore])
+  }, [currentUser._id])
 
   console.log("showMore", showMore)
 
@@ -53,10 +53,10 @@ function DashUsers() {
     }    
   }
 
-  const handleDeleteUser= async () => {
+  const handleDeleteUser = async () => {
     setShowModal(false);
     try{
-      const res = await fetch(`/api/user/deleteuser/${userIdToDelete}/${currentUser._id}`,
+      const res = await fetch(`/api/user/delete/${userIdToDelete}`,
         {
           method: "DELETE",
         }
@@ -66,7 +66,7 @@ function DashUsers() {
       if(!res.ok){
         console.log(data.message);
       }else{
-        setUers((prev) => prev.filter((post) => post._id !== userIdToDelete));
+        setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
       }
     }catch(error){
 
@@ -112,7 +112,7 @@ function DashUsers() {
                 <Table.Cell>
                   <span className='font-medium text-red-500 hover:underline cursor-pointer' onClick={
                     () => {
-                      setShowModal(true);
+                      setShowModal(true)
                       setUserIdToDelete(user._id)
                     }
                   }><RiDeleteBin2Fill /></span>
