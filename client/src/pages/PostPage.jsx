@@ -2,6 +2,7 @@ import { Button } from 'flowbite-react';
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CallToAction from '../components/CallToAction';
+import CommentSection from '../components/CommentSection';
 
 export default function PostPage() {
   const { postSlug } = useParams();
@@ -21,6 +22,7 @@ export default function PostPage() {
           return;
         }
         if (res.ok) {
+          console.log("data.posts[0]", data.posts[0]);
           setPost(data.posts[0]);
           setError(false);
         }
@@ -61,6 +63,7 @@ export default function PostPage() {
       <div className="max-w-4l mx-auto w-full">
         <CallToAction/>
       </div>
+      <CommentSection postId={post?._id}/>
     </main>
   );
 }

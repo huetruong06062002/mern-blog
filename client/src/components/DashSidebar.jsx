@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {Sidebar} from 'flowbite-react'
 import {HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup} from 'react-icons/hi';
 import { Link, useLocation } from 'react-router-dom';
-import { signoutSucess } from '../redux/user/userSlice';
+import { signoutSuccess } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
@@ -23,7 +23,7 @@ function DashSidebar() {
       if(!res.ok){
         console.log(data.message)
       }else {
-        dispatch(signoutSucess());
+        dispatch(signoutSuccess());
       }
     } catch (error) {
       console.log(error.message);
