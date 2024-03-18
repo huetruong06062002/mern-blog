@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import moment from 'moment';
-function Comment({comment}) {
+import {FaThumbsUp} from "react-icons/fa"
+import {useSelector} from 'react-redux';
+
+function Comment({comment, onLike}) {
 
   const [user, setUser] = useState({});
-  console.log('user', user);
-  useEffect(() => {
-    const getUser = async() => {
-      try {
-        const res = await fetch(`/api/user/${comment.userId}`);
-        const data = await res.json();
-        console.log("res", res);
-        if(res.ok){
-          setUser(data);
-        }
-      } catch (error) {
-        connsole.log(error.message);
+  const {currentUser} = useSelector((state) => state.user);
+
+  const getUser = async() => {
+    try {
+      const res = await fetch(`/api/user/${comment.userId}`);
+      const data = await res.json();
+      console.log("res", res);
+      if(res.ok){
+        setUser(data);
       }
+    } catch (error) {
+      console.log(error.message);
     }
+  }
+  useEffect(() => {  
     getUser();
   }, [comment])
   return (
-    <div className='flex -4 border-b dark:border-gray-600 text-sm mt-5'>
+    <div className='flex -4 border-b dark:border-gray-600 text-sm mt-5 pb-2'>
       <div className='flex-shrink-0 mr-3'>
         <img className='w-10 h-10 rounded-full bg-gray-200' src={user.profilePicture} alt ={user.username}/>
       </div>
@@ -28,10 +32,28 @@ function Comment({comment}) {
         <div className="flex items-center mb-1">
           <span className='font-bold mr-1 text-xs truncate'>{user ? `@${user.username}` : "anonymous user"}</span>
           <span className='text-gray-500 text-xs'>
-            {moment(comment.createdAt).fromNow()}
+            {moment(comment?.createdAt).fromNow()}
           </span>
         </div>
-        <p className='text-gray-500 pb-2'>{comment.content}</p>
+        <p className='text-gray-500 pb-2'>{comment?.content}</p>
+        <div className='flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2'>
+          <button type='button' onClick={() => onLike(comment._id)} className={
+          `text-gray-400 hover:text-blue-500
+            ${
+              currentUser && comment.likes.includes(currentUser._id)
+              &&  '!text-blue-500'
+            }
+          ` 
+          }>
+            <FaThumbsUp className='text-sm'/>
+          </button>
+          <p className='text-gray-400'>
+            {
+              comment.numberOfLikes > 0 && comment.numberOfLikes + " "
+              + (comment.numberOfLikes > 1 ? "likes" : "like")
+            }
+          </p>
+        </div>
       </div>
     </div>
   )

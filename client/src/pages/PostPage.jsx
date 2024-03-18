@@ -12,6 +12,8 @@ export default function PostPage() {
   const [post, setPost] = useState(null);
 
   console.log("post", post);
+  console.log("postid", post?._id);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
