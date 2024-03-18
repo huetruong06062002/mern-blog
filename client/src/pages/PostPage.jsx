@@ -22,7 +22,6 @@ export default function PostPage() {
           return;
         }
         if (res.ok) {
-          console.log("data.posts[0]", data.posts[0]);
           setPost(data.posts[0]);
           setError(false);
         }
